@@ -113,26 +113,25 @@
             appendMessage(text, 'user');
 
             try {
-                // Using a clean no-cors configuration to force the browser to let the request through
-                const response = await fetch(n8nWebhookUrl, {
+                // Paste your localtunnel link right here
+                const response = await fetch(' https://dry-coins-feel.loca.lt', {
                     method: 'POST',
-                    mode: 'no-cors', 
                     headers: { 
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        action: "sendMessage",
                         chatInput: text,
-                        sessionId: "3a54e1679fb54e719d2a83582fbaf4a9"
+                        sessionId: "f3252"
                     })
                 });
                 
-                // Note: 'no-cors' mode returns an opaque response, meaning the browser hides the body 
-                // but successfully delivers the trigger to your n8n canvas!
-                appendMessage("Message sent to backend! Checking execution...", 'assistant');
-                
+                const data = await response.json();
+                const reply = data.output || data.text || (data[0] && (data[0].output || data[0].text)) || "Message processed successfully!";
+                appendMessage(reply, 'assistant');
             } catch (err) {
                 console.error("Backend Error:", err);
-                appendMessage("Error communicating with Favor backend.", 'assistant');
+                appendMessage("Failed to connect to local n8n server.", 'assistant');
             }
         }
         function appendMessage(text, sender) {
